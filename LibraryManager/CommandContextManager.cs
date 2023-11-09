@@ -18,16 +18,33 @@ namespace LibraryManager
         #region utasítások
         public void Save(string path)
         {
+            if (!checkIfInNormalMode()) return;
+
             libraryManager.Save(path);
         }
+        
+        private bool checkIfInNormalMode()
+        {
+            if (IsInEditBookMode)
+            {
+                Console.WriteLine("Előbb fejezd be az aktuális könyv szerkesztését");
+                return false;
+            }
+            return true;
+        }
+
 
         public void Load(string path)
         {
+            if (!checkIfInNormalMode()) return;
+
             libraryManager.Load(path);
         }
 
         public void CreateNewBook(string isbn)
         {
+            if (!checkIfInNormalMode()) return;
+
             if (!libraryManager.ValidateISBN(isbn))
             {
                 Console.WriteLine("Hibás ISBN szám");
@@ -45,6 +62,8 @@ namespace LibraryManager
 
         public void DeleteBook(string isbn)
         {
+            if (!checkIfInNormalMode()) return;
+
             if (!libraryManager.IsISBNInLibrary(isbn))
             {
                 Console.WriteLine("Nincs ilyen ISBN számú könyv az adatbázisban");
@@ -56,6 +75,8 @@ namespace LibraryManager
 
         public void UpdateTitleOfBook(string isbn, string title)
         {
+            if (!checkIfInNormalMode()) return;
+
             if (!libraryManager.IsISBNInLibrary(isbn))
             {
                 Console.WriteLine("Ilyen ISBN számú könyv nincs az adatbázisban");
@@ -67,6 +88,8 @@ namespace LibraryManager
 
         public void UpdateAuthorOfBook(string isbn, string author)
         {
+            if (!checkIfInNormalMode()) return;
+
             if (!libraryManager.IsISBNInLibrary(isbn))
             {
                 Console.WriteLine("Ilyen ISBN számú könyv nincs az adatbázisban");
@@ -98,24 +121,56 @@ namespace LibraryManager
 
         public void StartEditingBook(string isbn)
         {
+            if (!checkIfInNormalMode()) return;
+
             //TODO
+            
+            if (!libraryManager.IsISBNInLibrary(isbn))
+            {
+                Console.WriteLine("Ilyen ISBN számú könyv nincs az adatbázisban");
+                return;
+            }
+            editedISBN = isbn;
         }
 
         public void UpdateEditedBookTitle(string title)
         {
             //TODO
+            if (!checkIfInEditMode()) return;
+            libraryManager.UpdateTitleOfBook(editedISBN, title);
         }
 
         public void UpdateEditedBookAuthor(string author)
         {
             //TODO
+            if (!checkIfInEditMode()) return;
+            libraryManager.UpdateAuthorOfBook(editedISBN, author);
         }
 
         public void FinishEditingBook()
         {
             //TODO
+            if (!checkIfInEditMode()) return;
+            editedISBN = null;
+        }
+        
+        private bool checkIfInEditMode()
+        {
+            if (!IsInEditBookMode)
+            {
+                Console.WriteLine("Előbb válassz ki egy könyvet szerkesztésre");
+                return false;
+            }
+            return true;
         }
 
+
         #endregion
+        
+        private string editedISBN = null;
+        private bool IsInEditBookMode
+        {
+            get { return !string.IsNullOrEmpty(editedISBN); }
+        }
     }
 }
