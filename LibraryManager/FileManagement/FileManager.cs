@@ -16,20 +16,24 @@ namespace LibraryManager.FileManagement
        /// <summary>
         /// Elment egy könyvtárat az elérési útvonalon található fájlba
         /// </summary>
+       private readonly Dictionary<string, ILibraryFileManager> fileManagers = new Dictionary<string, ILibraryFileManager>();
+       public FileManager()
+       {
+           fileManagers.Add("json", new LibraryJSONFileManager());
+           fileManagers.Add("xml", new LibraryXMLFileManager());
+       }
+
         public void StoreLibrary(LibraryData library, string path)
         {
             var extension = Path.GetExtension(path).TrimStart('.');
-            if (extension == "xml")
+            if (fileManagers.ContainsKey(extension))
             {
-                var serializer = new LibraryXmlSerializer();
-                var text = serializer.GenerateXml(library);
-                File.WriteAllText(path, text);
-                Console.WriteLine($"Adatok mentve ide: '{path}'");
-                return;
+                fileManagers[extension].SaveFile(library, path);
             }
-
-
-            Console.WriteLine("Nem támogatott file típus");
+            else
+            {
+                Console.WriteLine("Ismeretlen fájlformátum!");
+            }
         }
 
         /// <summary>
@@ -38,17 +42,15 @@ namespace LibraryManager.FileManagement
         public LibraryData LoadLibrary(string path)
         {
             var extension = Path.GetExtension(path).TrimStart('.');
-            if (extension == "xml")
+            if (fileManagers.ContainsKey(extension))
             {
-                var text = File.ReadAllText(path);
-                var serializer = new LibraryXmlSerializer();
-                var library = serializer.LoadFromXml(text);
-                if (library != null)
-                    Console.WriteLine("Könyvtár sikeresen betöltve");
-                return library;
+                return fileManagers[extension].LoadFile(path);
+            }
+            else
+            {
+                Console.WriteLine("Ismeretlen fájlformátum!");
             }
 
-            Console.WriteLine($"Nem támogatott file típus, jelenleg csak ezeket a fájlokat támogatjuk: xml");
             return null;
         }
     }
