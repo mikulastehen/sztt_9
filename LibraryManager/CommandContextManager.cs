@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LibraryManager.Commands;
 
 namespace LibraryManager
 {
@@ -13,6 +14,8 @@ namespace LibraryManager
     /// </summary>
     public class CommandContextManager
     {
+        private readonly CommandProcessor commandProcessor = new CommandProcessor();
+
         private readonly LibraryManager libraryManager = new LibraryManager();
 
         #region utasítások
@@ -57,7 +60,9 @@ namespace LibraryManager
                 return;
             }
 
-            libraryManager.CreateNewBook(isbn);
+            //libraryManager.CreateNewBook(isbn);
+            commandProcessor.AddAndExecute(new CreateBookCommand(libraryManager, isbn));
+
         }
 
         public void DeleteBook(string isbn)
@@ -70,7 +75,9 @@ namespace LibraryManager
                 return;
             }
 
-            libraryManager.DeleteBook(isbn);
+            //libraryManager.DeleteBook(isbn);
+            commandProcessor.AddAndExecute(new DeleteBookCommand(libraryManager, isbn));
+
         }
 
         public void UpdateTitleOfBook(string isbn, string title)
@@ -83,7 +90,9 @@ namespace LibraryManager
                 return;
             }
             
-            libraryManager.UpdateTitleOfBook(isbn, title);
+            //libraryManager.UpdateTitleOfBook(isbn, title);
+            commandProcessor.AddAndExecute(new UpdateTitleCommand(libraryManager, isbn, title));
+
         }
 
         public void UpdateAuthorOfBook(string isbn, string author)
@@ -96,7 +105,10 @@ namespace LibraryManager
                 return;
             }
 
-            libraryManager.UpdateAuthorOfBook(isbn, author);
+            //libraryManager.UpdateAuthorOfBook(isbn, author);
+            commandProcessor.AddAndExecute(new UpdateAuthorCommand(libraryManager, isbn,
+                author));
+
         }
 
         public void ShowLogs()
@@ -106,8 +118,10 @@ namespace LibraryManager
         }
 
         public void Undo()
-        {
+        { 
             //TODO
+            commandProcessor.Undo();
+
         }
 
         public void PrintBooks()
@@ -137,14 +151,20 @@ namespace LibraryManager
         {
             //TODO
             if (!checkIfInEditMode()) return;
-            libraryManager.UpdateTitleOfBook(editedISBN, title);
+            //libraryManager.UpdateTitleOfBook(editedISBN, title);
+            commandProcessor.AddAndExecute(new UpdateTitleCommand(libraryManager, editedISBN,
+                title));
+
         }
 
         public void UpdateEditedBookAuthor(string author)
         {
             //TODO
             if (!checkIfInEditMode()) return;
-            libraryManager.UpdateAuthorOfBook(editedISBN, author);
+            //libraryManager.UpdateAuthorOfBook(editedISBN, author);
+            commandProcessor.AddAndExecute(new UpdateAuthorCommand(libraryManager, editedISBN,
+                author));
+
         }
 
         public void FinishEditingBook()

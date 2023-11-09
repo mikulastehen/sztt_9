@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LibraryManager.FileManagement;
+using LibraryManager.Memento;
 using LibraryManager.Models;
 using LibraryManager.Persistence;
 using LibraryManager.Serializers;
@@ -156,6 +157,27 @@ namespace LibraryManager
                     $"* {book.Author ?? "<HIÁNYZÓ ADATOK>"}: {book.Title ?? "<HIÁNYZÓ ADATOK>"} (ISBN: {isbn}) [utoljára módosítva: {book.LastModificationDate.ToShortDateString()}--{book.LastModificationDate.ToShortTimeString()}]");
             }
 
+        }
+        
+        public BookMemento CreateBookMemento(string isbn)
+        {
+            return new BookMemento(
+                booksByISBNs.ContainsKey(isbn) ? booksByISBNs[isbn].Clone() : null,
+                logsByISBNs.ContainsKey(isbn) ? new List<BookLogItem>(logsByISBNs[isbn]) : null,
+                isbn
+            );
+        }
+        public void RestoreBookFromMemento(BookMemento memento)
+        {
+            if (memento.Book == null && booksByISBNs.ContainsKey(memento.ISBN))
+                booksByISBNs.Remove(memento.ISBN);
+            else
+                booksByISBNs[memento.ISBN] = memento.Book;
+
+            if (memento.LogItems == null && logsByISBNs.ContainsKey(memento.ISBN))
+                logsByISBNs.Remove(memento.ISBN);
+            else
+                logsByISBNs[memento.ISBN] = memento.LogItems;
         }
     }
 
