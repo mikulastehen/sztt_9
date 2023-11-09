@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "K+a2FlCTo5d/VAbkiEP0LoYWghBhj6TW+ni7UbT8+/ZhrMvZWwlFrqYPu9iWnsTSyzDY/TMuM+TZWGOmog+FYw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\andra\\Downloads\\GY09 Tervezési minták 3 - Kiinduló 2022\\DesignPatterns3-start\\LibraryManager\\LibraryManager.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\andra\\.nuget\\packages\\newtonsoft.json\\12.0.2\\newtonsoft.json.12.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}
