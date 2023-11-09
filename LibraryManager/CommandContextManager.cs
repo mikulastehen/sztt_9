@@ -18,6 +18,8 @@ namespace LibraryManager
 
         private readonly LibraryManager libraryManager = new LibraryManager();
 
+        private EditBookCommand editBookCommand = null;
+        
         #region utasítások
         public void Save(string path)
         {
@@ -138,6 +140,8 @@ namespace LibraryManager
             if (!checkIfInNormalMode()) return;
 
             //TODO
+
+            
             
             if (!libraryManager.IsISBNInLibrary(isbn))
             {
@@ -145,6 +149,8 @@ namespace LibraryManager
                 return;
             }
             editedISBN = isbn;
+            editBookCommand = new EditBookCommand(libraryManager, editedISBN);
+            
         }
 
         public void UpdateEditedBookTitle(string title)
@@ -152,8 +158,8 @@ namespace LibraryManager
             //TODO
             if (!checkIfInEditMode()) return;
             //libraryManager.UpdateTitleOfBook(editedISBN, title);
-            commandProcessor.AddAndExecute(new UpdateTitleCommand(libraryManager, editedISBN,
-                title));
+            //commandProcessor.AddAndExecute(new UpdateTitleCommand(libraryManager, editedISBN, title));
+            editBookCommand.AddCommand(new UpdateTitleCommand(libraryManager, editedISBN, title));
 
         }
 
@@ -162,16 +168,21 @@ namespace LibraryManager
             //TODO
             if (!checkIfInEditMode()) return;
             //libraryManager.UpdateAuthorOfBook(editedISBN, author);
-            commandProcessor.AddAndExecute(new UpdateAuthorCommand(libraryManager, editedISBN,
-                author));
-
+            //commandProcessor.AddAndExecute(new UpdateAuthorCommand(libraryManager, editedISBN, author));
+            editBookCommand.AddCommand(new UpdateAuthorCommand(libraryManager, editedISBN, author));
         }
 
         public void FinishEditingBook()
         {
             //TODO
             if (!checkIfInEditMode()) return;
+            
+            commandProcessor.AddAndExecute(editBookCommand);
+            
+            
             editedISBN = null;
+            editBookCommand = null;
+            
         }
         
         private bool checkIfInEditMode()
