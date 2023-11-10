@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace LibraryManager.Commands;
 
@@ -22,5 +23,13 @@ public class EditBookCommand : BookCommand
     {
         commands.Add(command);
     }
-    
+
+    public void UndoLas()
+    {
+        if (commands.Any())
+        {
+            commands.RemoveAt(commands.Count-1);
+        }
+    }
+
 }

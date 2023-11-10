@@ -122,7 +122,14 @@ namespace LibraryManager
         public void Undo()
         { 
             //TODO
-            commandProcessor.Undo();
+            if (!IsInEditBookMode)
+            {
+                commandProcessor.Undo();
+            }
+            else
+            {
+                editBookCommand.UndoLas();
+            }
 
         }
 
